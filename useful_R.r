@@ -1,14 +1,18 @@
 ##### Get command arguments
 get_command_args = function(args = commandArgs(),pos=".GlobalEnv"){
-  try(args[-(1:which(args=="--args"))])->raw.args
-  var_names <- sub("=.*","",raw.args)
-  vars <<- sub(".*=","",raw.args) # if there is no '=' sign, the  variable name will also be its value
-  names(vars) <- var_names
-
-  # Default values:
-
-  for(i in 1:length(vars))
-    assign(names(vars)[i],vars[i],pos=pos)               
+  if (any(args=="--args")){
+    try(args[-(1:which(args=="--args"))])->raw.args
+    var_names <- sub("=.*","",raw.args)
+    vars <<- sub(".*=","",raw.args) # if there is no '=' sign, the  variable name will also be its value
+    names(vars) <- var_names
+  
+    # Default values:
+  
+    for(i in 1:length(vars)){
+      assign(names(vars)[i],vars[i],pos=pos)               
+      cat(sprintf("Assigned %s to %s\n",names(vars)[i],vars[i])) 
+    }
+  }
 }
 
 
