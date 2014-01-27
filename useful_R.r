@@ -162,3 +162,31 @@ plot.off = function()if(!getOption('dev_override'))dev.off()
 
 debugMode= function()options(dev_override=TRUE)
 fileMode= function()options(dev_override=FALSE)
+
+
+
+########################
+## K means clustering
+doK = function(myData, k,reorderColumn=min(c(ncol(myData),5))){
+  # cluster
+  if (!is.na(reorderColumn) )
+    myData = myData[order(myData[,reorderColumn]),]
+  Ks <- kmeans(myData,k)
+  
+  # Make a list for re-ordering/plotting
+  G=sapply(1:k,function(x)c(which(Ks$cluster==x),NA,NA))  
+  list(Kmeans=Ks,NewData=myData[unlist(G),])
+}
+
+# Fill the NA/NaN?Inf values of a vector with mean / median values so that we can run kMeans on it
+fillEmptyValues = function(V, averageFunction=mean){
+    V[is.na(V) | is.nan(V) | is.infinite(V)] <- averageFunction(V, na.rm=T)
+    V
+}
+
+fillEmptyValues.byCol = function(dat,F=mean)apply(dat,2,fillEmptyValues,F)
+fillEmptyValues.byRow = function(dat,F=mean)t(apply(dat,1,fillEmptyValues,F))
+
+
+
+
